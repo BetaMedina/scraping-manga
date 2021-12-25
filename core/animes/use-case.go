@@ -1,6 +1,10 @@
 package animes
 
-import "github.com/gocolly/colly"
+import (
+	"strconv"
+
+	"github.com/gocolly/colly"
+)
 
 type Scraping interface {
 	Read() *AnimeScraping
@@ -28,6 +32,8 @@ func (s *UseCase) Read() []*AnimeScraping {
 			infos = append(infos, &formattedValues)
 		})
 	})
-	s.c.Visit("https://mangalivre.net/lista-de-mangas/ordenar-por-atualizacoes")
+	for i := 1; i < 6; i++ {
+		s.c.Visit("https://mangalivre.net/lista-de-mangas/ordenar-por-atualizacoes?page=" + strconv.Itoa(i))
+	}
 	return infos
 }
