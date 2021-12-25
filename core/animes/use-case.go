@@ -32,7 +32,7 @@ func (s *UseCase) Read() []*AnimeScraping {
 			infos = append(infos, &formattedValues)
 		})
 	})
-	for i := 1; i < 6; i++ {
+	for i := 1; i < 13; i++ {
 		s.c.Visit("https://mangalivre.net/lista-de-mangas/ordenar-por-atualizacoes?page=" + strconv.Itoa(i))
 	}
 	return infos
