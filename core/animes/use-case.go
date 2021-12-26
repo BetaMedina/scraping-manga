@@ -1,6 +1,8 @@
 package animes
 
 import (
+	"encoding/csv"
+	"os"
 	"strconv"
 
 	"github.com/gocolly/colly"
@@ -8,6 +10,7 @@ import (
 
 type Scraping interface {
 	Read() *AnimeScraping
+	SaveReport(info *AnimeScraping) (bool, error)
 }
 
 type UseCase struct {
@@ -36,4 +39,30 @@ func (s *UseCase) Read() []*AnimeScraping {
 		s.c.Visit("https://mangalivre.net/lista-de-mangas/ordenar-por-atualizacoes?page=" + strconv.Itoa(i))
 	}
 	return infos
+}
+
+func (s *UseCase) SaveReport(info []*AnimeScraping) (bool, error) {
+	f, err := os.Create("updates.csv")
+	defer f.Close()
+
+	if err != nil {
+		return false, err
+	}
+
+	w := csv.NewWriter(f)
+
+	records := [][]string{
+		{"title", "url"},
+	}
+
+	for _, k := range info {
+		records = append(records, []string{
+			k.Title, k.Url,
+		})
+	}
+	err = w.WriteAll(records)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }

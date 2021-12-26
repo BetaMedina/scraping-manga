@@ -1,9 +1,9 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"hot-reload/core/animes"
+	"log"
 
 	"github.com/gocolly/colly"
 )
@@ -13,8 +13,12 @@ func main() {
 		colly.AllowedDomains("mangalivre.net", "https://mangalivre.net"),
 	)
 
-	infos := animes.NewAnimeUseCase(c)
-	scrapingResult := infos.Read()
-	jsonResponse, _ := json.Marshal(scrapingResult)
-	fmt.Println(string(jsonResponse))
+	useCase := animes.NewAnimeUseCase(c)
+	scrapingResult := useCase.Read()
+
+	result, err := useCase.SaveReport(scrapingResult)
+	if err != nil {
+		log.Panic(err.Error())
+	}
+	fmt.Println("Operation has finished with with sucess : ", result)
 }
