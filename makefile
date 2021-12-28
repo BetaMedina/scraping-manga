@@ -1,5 +1,5 @@
 dev:
-	nodemon --exec go run web/main.go
+	nodemon --exec go run cmd/main.go
 
 run:
 	go run web/main.go

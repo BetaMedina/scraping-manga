@@ -15,7 +15,6 @@ func main() {
 
 	useCase := animes.NewAnimeUseCase(c)
 	scrapingResult := useCase.Read()
-
 	result, err := useCase.SaveReport(scrapingResult)
 	if err != nil {
 		log.Panic(err.Error())

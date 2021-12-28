@@ -25,7 +25,6 @@ func NewAnimeUseCase(colector *colly.Collector) *UseCase {
 
 func (s *UseCase) Read() []*AnimeScraping {
 	var infos []*AnimeScraping
-
 	s.c.OnHTML("div#titulos-az > div.content-wraper > div.tag-container> div.seriesList", func(e *colly.HTMLElement) {
 		e.ForEach("ul.seriesList > li", func(_ int, el *colly.HTMLElement) {
 			formattedValues := AnimeScraping{
