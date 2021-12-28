@@ -9,7 +9,7 @@ import (
 )
 
 type Scraping interface {
-	Read() *AnimeScraping
+	Read(newsPage int) *AnimeScraping
 	SaveReport(info *AnimeScraping) (bool, error)
 }
 
@@ -23,7 +23,7 @@ func NewAnimeUseCase(colector *colly.Collector) *UseCase {
 	}
 }
 
-func (s *UseCase) Read() []*AnimeScraping {
+func (s *UseCase) Read(newsPage int) []*AnimeScraping {
 	var infos []*AnimeScraping
 	s.c.OnHTML("div#titulos-az > div.content-wraper > div.tag-container> div.seriesList", func(e *colly.HTMLElement) {
 		e.ForEach("ul.seriesList > li", func(_ int, el *colly.HTMLElement) {
@@ -34,9 +34,7 @@ func (s *UseCase) Read() []*AnimeScraping {
 			infos = append(infos, &formattedValues)
 		})
 	})
-	for i := 1; i < 13; i++ {
-		s.c.Visit("https://mangalivre.net/lista-de-mangas/ordenar-por-atualizacoes?page=" + strconv.Itoa(i))
-	}
+	s.c.Visit("https://mangalivre.net/lista-de-mangas/ordenar-por-atualizacoes?page=" + strconv.Itoa(newsPage))
 	return infos
 }
 
