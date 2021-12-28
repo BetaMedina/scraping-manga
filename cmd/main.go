@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"hot-reload/core/animes"
+	"hot-reload/animes"
 	"log"
 
 	"github.com/gocolly/colly"
