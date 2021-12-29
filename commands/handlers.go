@@ -11,13 +11,13 @@ import (
 	"github.com/gocolly/colly"
 )
 
-func HandleScrapingMessages(s *discordgo.Session, m *discordgo.MessageCreate, page int) {
+func HandleScrapingMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	c := colly.NewCollector(
-		colly.AllowedDomains("mangalivre.net", "https://mangalivre.net"),
+		colly.AllowedDomains("https://mangayabu.top", "mangayabu.top"),
 	)
 	useCase := animes.NewAnimeUseCase(c)
-	scrapingResult := useCase.Read(page)
-	fmt.Println(page)
+	scrapingResult := useCase.Read()
+	fmt.Println()
 	if len(scrapingResult) == 0 {
 		s.ChannelMessageSend(m.ChannelID, "Não foi econtrado nenhuma atualização para a data solicitada")
 		return
@@ -39,6 +39,6 @@ func HandleScrapingMessages(s *discordgo.Session, m *discordgo.MessageCreate, pa
 }
 
 func HandleNotFoundCommandMessage(s *discordgo.Session, m *discordgo.MessageCreate) {
-	s.ChannelMessageSend(m.ChannelID, "Não consegui compreender a mensagem, tente mandar algo como: !news Pagina, que irei lhe dizer os lançamentos que temos")
+	s.ChannelMessageSend(m.ChannelID, "Não consegui compreender a mensagem, tente mandar algo como: **!news**, que irei lhe listar todos os lançamentos que temos")
 	return
 }

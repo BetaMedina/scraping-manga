@@ -2,9 +2,8 @@ package animes
 
 import (
 	"encoding/csv"
-	"fmt"
 	"os"
-	"strconv"
+	"strings"
 
 	"github.com/gocolly/colly"
 )
@@ -24,20 +23,22 @@ func NewAnimeUseCase(colector *colly.Collector) *UseCase {
 	}
 }
 
-func (s *UseCase) Read(newsPage int) []*AnimeScraping {
+func (s *UseCase) Read() []*AnimeScraping {
 	var infos []*AnimeScraping
-	fmt.Println("teste")
-
-	s.c.OnHTML("div#titulos-az > div.content-wraper > div.tag-container> div.seriesList", func(e *colly.HTMLElement) {
-		e.ForEach("ul.seriesList > li", func(_ int, el *colly.HTMLElement) {
-			formattedValues := AnimeScraping{
-				Url:   `https://mangalivre.net` + el.ChildAttrs("li > a.link-block ", "href")[0],
-				Title: el.ChildText("li > a.link-block > div.series-info > span.series-title > h1 "),
+	s.c.OnHTML("div#maingo > div.row", func(e *colly.HTMLElement) {
+		e.ForEach("div.s6", func(_ int, el *colly.HTMLElement) {
+			url := strings.TrimSpace(el.ChildAttr("div.card > div.card-image > a", "href"))
+			title := strings.TrimSpace(el.ChildText("div.card > div.card-content"))
+			if title != "" && url != "" {
+				formattedValues := AnimeScraping{
+					Url:   url,
+					Title: title,
+				}
+				infos = append(infos, &formattedValues)
 			}
-			infos = append(infos, &formattedValues)
 		})
 	})
-	s.c.Visit("https://mangalivre.net/lista-de-mangas/ordenar-por-atualizacoes?page=" + strconv.Itoa(newsPage))
+	s.c.Visit("https://mangayabu.top")
 	return infos
 }
 

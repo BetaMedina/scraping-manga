@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"strconv"
+	"fmt"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -15,8 +15,8 @@ func ExecuteCommand(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	switch message[0] {
 	case "!news":
-		page, _ := strconv.Atoi(message[1])
-		HandleScrapingMessages(s, m, page)
+		fmt.Println(message)
+		HandleScrapingMessages(s, m)
 		break
 
 	default:
