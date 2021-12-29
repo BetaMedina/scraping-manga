@@ -1,16 +1,16 @@
 package animes
 
 import (
-	"encoding/csv"
-	"os"
 	"strings"
 
 	"github.com/gocolly/colly"
 )
 
+const limitFindMangaQuantity = 5
+
 type Scraping interface {
-	Read(newsPage int) *AnimeScraping
-	SaveReport(info *AnimeScraping) (bool, error)
+	Read() []*AnimeScraping
+	FindManga(manga string, listQuantity int) []*ChapterScraping
 }
 
 type UseCase struct {
@@ -42,28 +42,23 @@ func (s *UseCase) Read() []*AnimeScraping {
 	return infos
 }
 
-func (s *UseCase) SaveReport(info []*AnimeScraping) (bool, error) {
-	f, err := os.Create("updates.csv")
-	defer f.Close()
-
-	if err != nil {
-		return false, err
-	}
-
-	w := csv.NewWriter(f)
-
-	records := [][]string{
-		{"title", "url"},
-	}
-
-	for _, k := range info {
-		records = append(records, []string{
-			k.Title, k.Url,
+func (s *UseCase) FindManga(manga string, listQuantity int) []*ChapterScraping {
+	var infos []*ChapterScraping
+	s.c.OnHTML("div#maingo > div.row > div.manga-info ", func(e *colly.HTMLElement) {
+		e.ForEach("div.manga-chapters > div.single-chapter", func(_ int, el *colly.HTMLElement) {
+			if len(infos) <= limitFindMangaQuantity {
+				date := strings.TrimSpace(el.ChildText("small"))
+				title := strings.TrimSpace(el.ChildAttr("a", "alt"))
+				url := strings.TrimSpace(el.ChildAttr("a", "href"))
+				formattedValues := ChapterScraping{
+					Url:   url,
+					Title: title,
+					Date:  date,
+				}
+				infos = append(infos, &formattedValues)
+			}
 		})
-	}
-	err = w.WriteAll(records)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
+	})
+	s.c.Visit("https://mangayabu.top/manga/" + manga)
+	return infos
 }
