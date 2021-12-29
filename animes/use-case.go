@@ -2,6 +2,7 @@ package animes
 
 import (
 	"encoding/csv"
+	"fmt"
 	"os"
 	"strconv"
 
@@ -25,6 +26,8 @@ func NewAnimeUseCase(colector *colly.Collector) *UseCase {
 
 func (s *UseCase) Read(newsPage int) []*AnimeScraping {
 	var infos []*AnimeScraping
+	fmt.Println("teste")
+
 	s.c.OnHTML("div#titulos-az > div.content-wraper > div.tag-container> div.seriesList", func(e *colly.HTMLElement) {
 		e.ForEach("ul.seriesList > li", func(_ int, el *colly.HTMLElement) {
 			formattedValues := AnimeScraping{
