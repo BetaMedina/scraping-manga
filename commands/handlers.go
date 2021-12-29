@@ -23,16 +23,17 @@ func HandleScrapingMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	var projectsMessage []string
 	maxMessageGroupSize, _ := strconv.Atoi(os.Getenv("MAX_SITE_MESSAGE_GROUP"))
+	var projectsMessage []string
+	projectsMessage = append(projectsMessage, fmt.Sprintf(">>> "))
 	for _, r := range scrapingResult {
-
-		projectsMessage = append(projectsMessage, fmt.Sprintf("Project: ** %s**\nUrl: ** %s **", r.Title, r.Url))
+		projectsMessage = append(projectsMessage, fmt.Sprintf("Project: ** %s**\nUrl: ** %s **\n", r.Title, r.Url))
+		fmt.Println(len(projectsMessage))
 		if len(projectsMessage) >= maxMessageGroupSize {
 			message := strings.Join(projectsMessage, "\n")
-
 			s.ChannelMessageSend(m.ChannelID, message)
 			projectsMessage = nil
+			projectsMessage = append(projectsMessage, fmt.Sprintf(">>> "))
 		}
 	}
 	return
