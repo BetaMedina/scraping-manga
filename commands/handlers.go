@@ -17,7 +17,6 @@ func HandleScrapingMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	)
 	useCase := animes.NewAnimeUseCase(c)
 	scrapingResult := useCase.Read()
-	fmt.Println()
 	if len(scrapingResult) == 0 {
 		s.ChannelMessageSend(m.ChannelID, "Não foi econtrado nenhuma atualização para a data solicitada")
 		return
@@ -28,7 +27,6 @@ func HandleScrapingMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	projectsMessage = append(projectsMessage, fmt.Sprintf(">>> "))
 	for _, r := range scrapingResult {
 		projectsMessage = append(projectsMessage, fmt.Sprintf("Project: ** %s**\nUrl: ** %s **\n", r.Title, r.Url))
-		fmt.Println(len(projectsMessage))
 		if len(projectsMessage) >= maxMessageGroupSize {
 			message := strings.Join(projectsMessage, "\n")
 			s.ChannelMessageSend(m.ChannelID, message)
